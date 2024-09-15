@@ -1,0 +1,5 @@
+ollama==0.3.2
+openai==1.43.0
+lazyme==0.0.27
+chromadb==0.5.3
+tqdm==4.66.5
