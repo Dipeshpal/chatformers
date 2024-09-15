@@ -1,8 +1,13 @@
 import ast
 import chromadb
 from tqdm import tqdm
-from llm import run_llm
-from embedding_llm import get_embeddings
+
+try:
+    from llm import run_llm
+    from embedding_llm import get_embeddings
+except:
+    from .llm import run_llm
+    from .embedding_llm import get_embeddings
 
 
 def create_client(chroma_host: str = None, chroma_port: int = None, settings=None):

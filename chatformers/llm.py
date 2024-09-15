@@ -1,6 +1,10 @@
 from ollama import Client as OllamaClient
 from openai import OpenAI
-from constant import SUPPORTED_LLM
+
+try:
+    from constant import SUPPORTED_LLM
+except:
+    from .constant import SUPPORTED_LLM
 
 
 def run_llm(llm_provider_settings, messages):

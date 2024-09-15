@@ -1,7 +1,11 @@
 from ollama import Client as OllamaClient
 from openai import OpenAI
-from constant import SUPPORTED_EMBEDDING_MODELS
 import requests
+
+try:
+    from constant import SUPPORTED_EMBEDDING_MODELS
+except:
+    from .constant import SUPPORTED_EMBEDDING_MODELS
 
 
 def get_embeddings(embedding_model_settings, text):
