@@ -13,6 +13,7 @@ except:
 def chat(query, system_message,
          llm_provider_settings, chroma_settings, embedding_model_settings, memory_settings,
          memory=True,
+         summarize_memory=False,
          collection_name=None,
          unique_session_id=None,
          unique_message_id=None,
@@ -26,6 +27,7 @@ def chat(query, system_message,
     :param embedding_model_settings: (dict) the settings
     :param memory_settings: (dict) the settings
     :param memory: (bool) the memory settings if true then vector memory will be automatically managed using chroma db
+    :param summarize_memory: (bool) flag to use summarize memory, improve quality but increase llm call
     :param collection_name: (str) chroma db collection name
     :param unique_session_id: (str) unique session id for the session using in chroma db
     :param unique_message_id: (str) unique message id using in chroma db
@@ -50,6 +52,13 @@ def chat(query, system_message,
                               results_per_query=memory_settings['results_per_query'],
                               llm_provider_settings=llm_provider_settings,
                               embedding_model_settings=embedding_model_settings)
+            if summarize_memory:
+                messages = [
+                    {'role': 'system',
+                     'content': f"\nSummarize given chats below- \n{memories}\n"},
+                ]
+                chat_response = run_llm(llm_provider_settings=llm_provider_settings, messages=messages)
+                memories = chat_response
 
             # formatting the message system message, buffer_window_chats, user query and memories fetched in openai format
             if buffer_window_chats is None:

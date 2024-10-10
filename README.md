@@ -109,6 +109,7 @@ response = chat(query=query, system_message=system_message,
                 embedding_model_settings=embedding_model_settings,
                 memory_settings=memory_settings,
                 memory=True,
+                summarize_memory=False,
                 collection_name=collection_name,
                 unique_session_id=unique_session_id,
                 unique_message_id=unique_message_id,
@@ -264,6 +265,7 @@ For the latest developments or specific policies, it is recommended to consult c
 - `unique_session_id = "012"`: (str) This you need to manage. Example if user-A is having conversation in session-1 or user-A is having conversation in session-2.
 - `unique_message_id = "A01"`: (str) This you need to manage. It can be any unique message id. You can use uuid as string here,
 - `system_message = "You are a helpful assistant."`: (str) Any system message or prompt.
+- `summarize_memory=False`: flag to use summarize memory, improve quality but increase llm call
 - `buffer_window_chats`: If you want to manage sliding window chat history, you can pass last-n message (last-n conversation) like this in OpenAI's format.
 
   Example:
