@@ -196,9 +196,9 @@ if __name__ == "__main__":
     user_id = "Sam-Julia"
     # model_name = ""
     model_name = "llama-3.1-8b-instant"
-    os.environ["GROQ_API_KEY"] = "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"
+    os.environ["GROQ_API_KEY"] = ""
     client = OpenAI(base_url="https://api.groq.com/openai/v1",
-                    api_key="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",
+                    api_key="",
                     )
     character_data = {"name": "Julia",
                       "description": "You are on online chatting website, chatting with strangers."}
