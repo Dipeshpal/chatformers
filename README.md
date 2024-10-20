@@ -13,7 +13,7 @@ pip install chatformers
 
 # Documentation-
 
-https://coda.io/@chatformers/chatformers
+https://chatformers.mintlify.app/introduction
 
 ## Why Choose chatformers?
 1. Effortless History Management: No need to manage extensive chat history manually; the package automatically handles it.

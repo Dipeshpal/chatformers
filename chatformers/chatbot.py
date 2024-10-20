@@ -280,13 +280,20 @@ if __name__ == "__main__":
     # Example to add buffer memory
     memory_messages = [
         {"role": "user", "content": "My name is Sam, what about you?"},
-        {"role": "assistant", "content": "Hello Sam! I'm Julia."}
+        {"role": "assistant", "content": "Hello Sam! I'm Julia."},
+        {"role": "user", "content": "What do you like to eat?"},
+        {"role": "assistant", "content": "I like pizza"}
     ]
     chatbot.add_memories(memory_messages, user_id=user_id)
 
     # Buffer window memory, this will be acts as sliding window memory for LLM
     message_history = [{"role": "user", "content": "where r u from?"},
-                       {"role": "assistant", "content": "I am from CA, USA"}]
+                       {"role": "assistant", "content": "I am from CA, USA"},
+                       {"role": "user", "content": "ok"},
+                       {"role": "assistant", "content": "hmm"},
+                       {"role": "user", "content": "What are u doing on next Sunday?"},
+                       {"role": "assistant", "content": "I am all available"}
+                       ]
 
     # Example to chat with the bot, send latest / current query here
     query = "Do you remember my name?"
