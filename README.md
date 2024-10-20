@@ -42,94 +42,75 @@ https://coda.io/@chatformers/chatformers
 Read Documentation for advanced usage and understanding: https://coda.io/@chatformers/chatformers
 
 ```
-from chatformers.chatbot import Chatbot
-import os
-from openai import OpenAI
+    from chatformers.chatbot import Chatbot
+    import os
+    from openai import OpenAI
 
-os.environ["GROQ_API_KEY"] = "<API_KEY>"
-GROQ_API_KEY = "<API_KEY>"
-groq_base_url = "https://api.groq.com/openai/v1"
+    system_prompt = None  # use the default
+    metadata = None  # use the default metadata
+    user_id = "Sam-Julia"
+    chat_model_name = "llama-3.1-8b-instant"
+    memory_model_name = "llama-3.1-8b-instant"
+    max_tokens = 150  # len of tokens to generate from LLM
+    limit = 4  # maximum number of memory to added during LLM chat
+    debug = True  # enable to print debug messages
 
-# Unique ID for conversation between Sam (User) and Julia (Chatbot)
-user_id = "Sam-Julia"
+    os.environ["GROQ_API_KEY"] = ""
+    llm_client = OpenAI(base_url="https://api.groq.com/openai/v1",
+                        api_key="",
+                        )  # Any OpenAI Compatible LLM Client, using groq here
+    config = {
+        "vector_store": {
+            "provider": "chroma",
+            "config": {
+                "collection_name": user_id,
+                "path": "db",
+            }
+        },
+        "embedder": {
+            "provider": "ollama",
+            "config": {
+                "model": "nomic-embed-text:latest"
+            }
+        },
+        "llm": {
+            "provider": "groq",
+            "config": {
+                "model": memory_model_name,
+                "temperature": 0.1,
+                "max_tokens": 1000,
+            }
+        },
+    }
 
-# Name of the model you want to use
-model_name = "llama-3.1-8b-instant"
+    chatbot = Chatbot(config=config, llm_client=llm_client, metadata=None, system_prompt=system_prompt,
+                      chat_model_name=chat_model_name, memory_model_name=memory_model_name,
+                      max_tokens=max_tokens, limit=limit, debug=debug)
 
-# Initialize OpenAI client with API key and base URL, we are using LLM from GROQ here, this is required for having conversation with LLM
-client = OpenAI(base_url=groq_base_url,
-                api_key=GROQ_API_KEY,
-                )
+    # Example to add buffer memory
+    memory_messages = [
+        {"role": "user", "content": "My name is Sam, what about you?"},
+        {"role": "assistant", "content": "Hello Sam! I'm Julia."}
+    ]
+    chatbot.add_memories(memory_messages, user_id=user_id)
 
-# You can provide character to your chatbot, the type should be dictionary with key value pairs of your choice we will integrate in system prompt or you can leave it empty dictionary
-character_data = {"name": "Julia",
-                  "description": "You are on online chatting website, chatting with strangers."}
+    # Buffer window memory, this will be acts as sliding window memory for LLM
+    message_history = [{"role": "user", "content": "where r u from?"},
+                       {"role": "assistant", "content": "I am from CA, USA"}]
 
-# Configuration: for configuration you can refer https://docs.mem0.ai/overview, hence chatformers use mem0 for memory and llm management
-# Example: https://docs.mem0.ai/examples/mem0-with-ollama
-# These configuration will be used for embedded the chats, handling memory creation automatically
-config = {
-    "vector_store": {
-        "provider": "chroma",
-        "config": {
-            "collection_name": "test",
-            "path": "db",
-        }
-    },
-    "embedder": {
-        "provider": "ollama",
-        "config": {
-            "model": "nomic-embed-text:latest"
-        }
-    },
-    "llm": {
-        "provider": "groq",
-        "config": {
-            "model": model_name,
-            "temperature": 0.1,
-            "max_tokens": 4000,
-        }
-    },
-    # "llm": {
-    #     "provider": "ollama",
-    #     "config": {
-    #         "model": model_name,
-    #         "temperature": 0.1,
-    #         "max_tokens": 4000,
-    #     }
-    # },
-}
+    # Example to chat with the bot, send latest / current query here
+    query = "Do you remember my name?"
+    response = chatbot.chat(query=query, message_history=message_history, user_id=user_id, print_stream=True)
+    print("Assistant: ", response)
 
-# Initialize Chatbot with LLM client, model name, character data, and configuration
-chatbot = Chatbot(llm_client=client, model_name=model_name, character_data=character_data, config=config)
-
-# Optional, if you want to add any memory into vector database at any point, uncomment this line
-# memory_messages = [
-#     {"role": "user", "content": "My name is Sam, what about you?"},
-#     {"role": "assistant", "content": "Hello Sam! I'm Julia."}
-# ]
-# chatbot.add_memories(memory_messages, user_id=user_id)
-
-# query is your current question that you want LLM to answer
-query = "what is my name"
-
-# message_history is a list of messages in openai format, this can be your conversation buffer window memory, you can manage it yourself
-message_history = [{"role": "user", "content": "where r u from?"},
-                   {"role": "assistant", "content": "I am from CA, USA"}]
-response = chatbot.chat(query=query, message_history=message_history, user_id=user_id,
-                        print_stream=True)
-
-# Final response from LLM based on message_history, and memory you have added if any and whatever chats happened with user_id
-print("Assistant: ", response)
-
-# Optional, Uncomment this line to get all memories of a user
-# memories = chatbot.get_memories(user_id=user_id)
-# for m in memories:
-#     print(m)
-# print("================================================================")
-# related_memories = chatbot.related_memory(user_id=user_id,
-#                                           query="yes i am sam? what us your name")
-# print(related_memories)
+    # Example to check memories in bot based on user_id
+    # memories = chatbot.get_memories(user_id=user_id)
+    # for m in memories:
+    #     print(m)
+    # print("================================================================")
+    # related_memories = chatbot.related_memory(user_id=user_id,
+    #                                           query="yes i am sam? what us your name")
+    # print(related_memories)
 ```
 
 
