@@ -39,78 +39,85 @@ https://chatformers.mintlify.app/introduction
 
 ## Example Usage-
 
-Read Documentation for advanced usage and understanding: https://coda.io/@chatformers/chatformers
+Read Documentation for advanced usage and understanding: https://chatformers.mintlify.app/development
 
 ```
-    from chatformers.chatbot import Chatbot
-    import os
-    from openai import OpenAI
-
-    system_prompt = None  # use the default
-    metadata = None  # use the default metadata
-    user_id = "Sam-Julia"
-    chat_model_name = "llama-3.1-8b-instant"
-    memory_model_name = "llama-3.1-8b-instant"
-    max_tokens = 150  # len of tokens to generate from LLM
-    limit = 4  # maximum number of memory to added during LLM chat
-    debug = True  # enable to print debug messages
-
-    os.environ["GROQ_API_KEY"] = ""
-    llm_client = OpenAI(base_url="https://api.groq.com/openai/v1",
-                        api_key="",
-                        )  # Any OpenAI Compatible LLM Client, using groq here
-    config = {
-        "vector_store": {
-            "provider": "chroma",
-            "config": {
-                "collection_name": user_id,
-                "path": "db",
-            }
-        },
-        "embedder": {
-            "provider": "ollama",
-            "config": {
-                "model": "nomic-embed-text:latest"
-            }
-        },
-        "llm": {
-            "provider": "groq",
-            "config": {
-                "model": memory_model_name,
-                "temperature": 0.1,
-                "max_tokens": 1000,
-            }
-        },
-    }
-
-    chatbot = Chatbot(config=config, llm_client=llm_client, metadata=None, system_prompt=system_prompt,
-                      chat_model_name=chat_model_name, memory_model_name=memory_model_name,
-                      max_tokens=max_tokens, limit=limit, debug=debug)
-
-    # Example to add buffer memory
-    memory_messages = [
-        {"role": "user", "content": "My name is Sam, what about you?"},
-        {"role": "assistant", "content": "Hello Sam! I'm Julia."}
-    ]
-    chatbot.add_memories(memory_messages, user_id=user_id)
-
-    # Buffer window memory, this will be acts as sliding window memory for LLM
-    message_history = [{"role": "user", "content": "where r u from?"},
-                       {"role": "assistant", "content": "I am from CA, USA"}]
-
-    # Example to chat with the bot, send latest / current query here
-    query = "Do you remember my name?"
-    response = chatbot.chat(query=query, message_history=message_history, user_id=user_id, print_stream=True)
-    print("Assistant: ", response)
-
-    # Example to check memories in bot based on user_id
-    # memories = chatbot.get_memories(user_id=user_id)
-    # for m in memories:
-    #     print(m)
-    # print("================================================================")
-    # related_memories = chatbot.related_memory(user_id=user_id,
-    #                                           query="yes i am sam? what us your name")
-    # print(related_memories)
+   from chatformers.chatbot import Chatbot
+   import os
+   from openai import OpenAI
+   
+   
+   system_prompt = None  # use the default
+   metadata = None  # use the default metadata
+   user_id = "Sam-Julia"
+   chat_model_name = "llama-3.1-70b-versatile"
+   memory_model_name = "llama-3.1-70b-versatile"
+   max_tokens = 150  # len of tokens to generate from LLM
+   limit = 4  # maximum number of memory to added during LLM chat
+   debug = True  # enable to print debug messages
+   
+   os.environ["GROQ_API_KEY"] = ""
+   llm_client = OpenAI(base_url="https://api.groq.com/openai/v1",
+                       api_key="",
+                       )  # Any OpenAI Compatible LLM Client
+   config = {
+       "vector_store": {
+           "provider": "chroma",
+           "config": {
+               "collection_name": "test",
+               "path": "db",
+           }
+       },
+       "embedder": {
+           "provider": "ollama",
+           "config": {
+               "model": "nomic-embed-text:latest"
+           }
+       },
+       "llm": {
+           "provider": "groq",
+           "config": {
+               "model": memory_model_name,
+               "temperature": 0.1,
+               "max_tokens": 1000,
+           }
+       },
+   }
+   
+   chatbot = Chatbot(config=config, llm_client=llm_client, metadata=None, system_prompt=system_prompt,
+                     chat_model_name=chat_model_name, memory_model_name=memory_model_name,
+                     max_tokens=max_tokens, limit=limit, debug=debug)
+   
+   # Example to add buffer memory
+   memory_messages = [
+       {"role": "user", "content": "My name is Sam, what about you?"},
+       {"role": "assistant", "content": "Hello Sam! I'm Julia."},
+       {"role": "user", "content": "What do you like to eat?"},
+       {"role": "assistant", "content": "I like pizza"}
+   ]
+   chatbot.add_memories(memory_messages, user_id=user_id)
+   
+   # Buffer window memory, this will be acts as sliding window memory for LLM
+   message_history = [{"role": "user", "content": "where r u from?"},
+                      {"role": "assistant", "content": "I am from CA, USA"},
+                      {"role": "user", "content": "ok"},
+                      {"role": "assistant", "content": "hmm"},
+                      {"role": "user", "content": "What are u doing on next Sunday?"},
+                      {"role": "assistant", "content": "I am all available"}
+                      ]
+   # Example to chat with the bot, send latest / current query here
+   query = "Could you remind me what do you like to eat?"
+   response = chatbot.chat(query=query, message_history=message_history, user_id=user_id, print_stream=True)
+   print("Assistant: ", response)
+   
+   # # Example to check memories in bot based on user_id
+   # memories = chatbot.get_memories(user_id=user_id)
+   # for m in memories:
+   #     print(m)
+   # print("================================================================")
+   # related_memories = chatbot.related_memory(user_id=user_id,
+   #                                           query="yes i am sam? what us your name")
+   # print(related_memories)
 ```
 
 
@@ -120,16 +127,13 @@ Read Documentation for advanced usage and understanding: https://coda.io/@chatfo
 1. Can I customize LLM endpoints / Groq or other models?
     - Yes, any OpenAI-compatible endpoints and models can be used.
 
-2. Can I use custom hosted chromadb
-    - Yes, you can specify custom endpoints for Chroma DB. If not provided, a Chroma directory will be created in your project's root folder.
+2. Can I use custom hosted chromadb, or any other vector db.
+    - Yes, read documentation.
 
-3. I don't want to manage history. Just wanted to chat.
-    - Yes, set `memory=False` to disable history management and chat directly.
- 
-4. Need help or have suggestions?
-    - Raise an issue or contact me at dipesh.paul@systango.com
+3. Need help or have suggestions?
+    - Raise an issue or contact me at dipeshpal17@gmail.com
 
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Dipeshpal/chatformers&type=Date)](https://star-history.com/#Dipeshpal/chatformers&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=Dipeshpal/chatformers&type=Date)](https://star-history.com/Dipeshpal/chatformers&Date)

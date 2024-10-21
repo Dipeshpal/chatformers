@@ -1,19 +1,17 @@
 import pprint
 import re
 import time
-from openai import OpenAI
 from mem0 import Memory
-import os
 from lazyme import color_print as cprint
 from enum import Enum
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARNING)
 
 try:
-    from constants import *
+    from chatformers_constants import *
 except:
-    from chatformers.constants import *
+    from chatformers.chatformers_constants import *
 
 
 # Enum for message types
